@@ -1,0 +1,125 @@
+package day09_ex;
+
+public class BookMgr_answer {
+	
+//BookApp_answer에 쓰기 위한 것!
+	
+	private Book[] bookList;
+		//member 변수 bookList 생성함
+	int count= 0;
+		//count 변수를 둬서 BookMgr_answer가 몇개의 book을 관리하는지 확인하기
+	
+	
+	//bookList의 Set Get Method 만들기
+	
+	// bookList에 직접 접근할 수 없도록 getBookList()는 제공하지 않도록 함!
+//	public Book[] getBookList() { //이렇게 Book[]의 배열도 return type 쓸 수도 있다!
+//		return bookList;
+//	}
+
+	public void setBookList(Book[] bookList) { //이렇게 Book[]의 배열을 매개변수로 쓸 수도 있다!
+		this.bookList = bookList;
+	}
+	
+	
+	
+	//생성자 함수 만들기
+	
+	//기본 생성자
+	public BookMgr_answer(){
+		this(10); 
+		//밑에 매개변수가 int size인 생성자 함수에 같은 코드가 있으므로 this() method로 가져와서 사용함
+	}
+	
+	//매개변수가 int size인 생성자
+		//이거로 BookTest_answer
+	public BookMgr_answer(int size) {
+		bookList = new Book[size];
+		
+	}
+	
+	//Book 객체를 bookList에 등록하는 addBook(Book book)메소드
+	public void addBook(Book book) {
+		if(count==bookList.length) {
+			//bookList의 저장할 공간이 부족할 때 더 큰공간을 만들기 위해 if문 만들었음
+			
+			Book[] copy = new Book[bookList.length*2];
+				//bookList의 방을 2배로 늘린 copy라는 배열 만들기
+			System.arraycopy(bookList, 0, copy, 0, bookList.length);
+				//원래 bookList에 있는 정보들을 새로만든 copy 배열에 복사하기
+			bookList =copy;
+			
+		}
+			
+		bookList[count] = book;
+		count++;
+		//bookList에 책이 추가되면 count 변수가 증가함! => 이럼으로써 어느 위치에 book이 저장되는지 관리할 수 있음  -> count 변수의 목적!
+	}
+
+	// Delete Method
+	// 삭제하려는 책이 bookList에 있는 책과 완전히 같아야함.
+	public void deleteBook(String title) {
+		
+		for(int i=0 ; i<count ; i++) {
+			
+			//여기도 나중에 uppercase해보기
+			if(bookList[i].getTitle().equals(title)) {
+				
+				System.arraycopy(bookList, i+1, bookList, i, count-i-1);
+				count--;
+				System.out.printf("%s 도서가 삭제 되었습니다.\n",title);
+				return;
+			}
+			
+		}
+		System.out.printf("%s 도서가 목록에 없습니다.\n",title);
+	}
+	
+	
+	//Search Book Method
+	public void searchTitleBook(String title) {
+		System.out.printf("%s 도서를 검색합니다.\n", title);
+		
+		for(Book data:bookList) {
+			
+			//if(data==null)return;
+				//이거 쓰면 밑에 null check 빠져도 됨!
+			
+			//equalsIgnoreCase는 대/소문자는 걸러주지만, 정확한 제목을 검색해야지만 되서 적합하지 않다!
+			if (data!=null && data.getTitle().toUpperCase().contains(title.toUpperCase())) {
+			//data가 null이면 toUpperCase에서 null point exception이 발생하므로 null이 아닐때, 라는 null check조건 넣음!	
+			//사용자가 대소문자 구분 없이 입력할 수 있으므로 입력값과 bookList의 title들을 모두 대소문자로 바꾸고 비교함!
+				data.print();
+			}
+		}
+		
+		System.out.println("\n-----------------------");
+	}
+
+	
+	//책 목록을 화면에 출력하는 printBookList()메소드
+	public void printBookList() {
+		System.out.println("========== Book List ==========");
+		for(int i=0 ; i<count ;i++) {
+			//count변수가 몇개의 책이 bookList에 저장되어 있는지 알고 있으므로 
+			
+			bookList[i].print();
+		}
+		System.out.printf("총 %d권\n", count);
+		System.out.println("===========================");
+		
+		
+	}
+	
+	//모든 책 가격의 합을 출력하는 printTotalPrice() 메소드
+	public int printTotalPrice() {
+		int sum=0;
+		for(int i= 0 ; i<count ; i++) {
+			
+			sum += bookList[i].getPrice();
+		}
+		return sum;
+	}
+	
+	
+}
